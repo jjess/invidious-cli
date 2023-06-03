@@ -2,20 +2,24 @@
 
 IFS=$'\n'
 
+#INV="https://invidious.namazso.eu"
+#INV="https://yewtu.be"
+INV="https://invidious.tiekoetter.com"
+
 while :; do 
     echo "Enter your search query"
     read query
 
     query=$(
         echo $query | 
-        sed 's/\s/+/g'
+        gsed 's/\s/+/g'
     )
     
-    results=$(curl "https://invidious.namazso.eu/api/v1/search/?q=$query" -s --retry-all-errors)
+    results=$(curl "${INV}/api/v1/search/?q=$query" -s --retry-all-errors)
 
     titles=$(
         echo "$results" | 
-        grep -oP '(?<="title":")(.+?)(?=","videoId")' | 
+        ggrep -oP '(?<="title":")(.+?)(?=","videoId")' | 
         nl -b a
     )
     
@@ -23,7 +27,7 @@ while :; do
     
     video_ids=$(
         echo $results | 
-        grep -oP '(?<="videoId":")[^"]+?(?=")'
+        ggrep -oP '(?<="videoId":")[^"]+?(?=")'
     )
 
     arr_v=($video_ids)
